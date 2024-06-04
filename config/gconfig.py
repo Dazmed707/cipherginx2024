@@ -2,7 +2,7 @@
 
 hostname = 'accounts.google.com'
 isSSL    = True
-server   = 'localhost'
+server   = '0.0.0.0'
 port     = 443
 domain   = server if port in [443,80] else '{}:{}'.format(server,port)
 
