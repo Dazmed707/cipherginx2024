@@ -297,7 +297,6 @@ if __name__ == '__main__':
     logging_level = {'error': logging.ERROR, 'debug': logging.DEBUG, 'info': logging.INFO}.get(LEVEL, logging.INFO)
     logging.basicConfig(format=PURPLE + '## %(asctime)s [%(levelname)s] - %(message)s' + RESET, level=logging_level)
     banner()
-
     try:
         logging.info('loading config ' + CONFIG)
         exec(f'from config.{CONFIG} import *')
