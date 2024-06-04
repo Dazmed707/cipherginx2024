@@ -6,7 +6,8 @@
 &nbsp;&nbsp;&nbsp;&nbsp;![Code Quality](https://img.shields.io/badge/dynamic/json?url=https://www.jsonkeeper.com/b/KNO7&label=code%20quality&query=codequality&style=flat-square&labelColor=grey&color=yellowgreen)
 &nbsp;&nbsp;&nbsp;&nbsp;![platform](https://img.shields.io/badge/dynamic/json?url=https://www.jsonkeeper.com/b/KNO7&label=platform&query=platform&style=flat-square&labelColor=grey&color=purple)
 
-![example] ![image](https://github.com/Dazmed707/cipherginx2024/assets/35184132/ce354e48-14bb-476d-80e1-e3d98b8a33bd)
+![example] ![image](https://github.com/Dazmed707/cipherginx2024/assets/35184132/0f4d52b7-a90a-4b97-a580-4dea94b222e3)
+
 
 
 ## Description
@@ -94,3 +95,5 @@ Use `'' (blank single quotes)` if you want to apply that replacement on all the 
 ## Contact &nbsp; [![Twitter](https://img.shields.io/twitter/url?style=social&url=https%3A%2F%2Fgithub.com%2Fcipheras%2Fcipherginx&label=Tweet)](https://twitter.com/intent/tweet?text=Hi:&url=https%3A%2F%2Fgithub.com%2Fcipheras%2Fcipherginx)
 > Feel free to submit a bug, add features or issue a pull request.
 
+
+(Use sed -i '/checkUpdate()/d' cipherginx.py for fix error checkUpdate)
