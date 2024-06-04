@@ -1,4 +1,4 @@
-# CipherGinx &nbsp; ![GitHub release (latest by date)](https://img.shields.io/github/v/release/cipheras/cipherginx?style=flat-square&logo=superuser)
+# CipherGinx 2024.6 &nbsp; ![GitHub release (latest by date)](https://img.shields.io/github/v/release/cipheras/cipherginx?style=flat-square&logo=superuser)
 #### Advanced phishing tool used for session & credential grabbing and bypassing 2FA using man-in-the-middle attack with standalone reverse proxy server. 
 
 ![Lines of code](https://img.shields.io/tokei/lines/github/cipheras/cipherginx?style=flat-square)
