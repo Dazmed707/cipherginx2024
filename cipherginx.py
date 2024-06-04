@@ -314,7 +314,7 @@ if __name__ == '__main__':
     else:
         logging.basicConfig(format=PURPLE + '## %(asctime)s [%(levelname)s] - %(message)s' + RESET, level=logging.INFO,)
     banner()
-    checkUpdate()
+
     try:
         logging.info('loading config ' + CONFIG)
         exec('from config.' + CONFIG + ' import *')
