@@ -14,7 +14,7 @@ from requests.packages.urllib3.exceptions import InsecureRequestWarning
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 # from urllib.parse import unquote, quote_plus
 
-VERSION = 'v1.5'
+VERSION = 'v2024.6'
 CONFIG = ''
 LEVEL = ''
 
@@ -73,18 +73,6 @@ def flags():
     if args.level:
         global LEVEL
         LEVEL = args.level
-
-def checkUpdate():
-    try:
-        logging.info('checking for updates')
-        resp = requests.get('https://api.github.com/repos/cipheras/cipherginx/releases').json()
-        version = resp[0]['tag_name']
-        release_name = resp[0]['name']
-        if version != VERSION:
-            print(BLUE+'['+GREEN+'+'+BLUE+'] Update available...'+BLINK+GREEN+version+' ['+release_name+']'+RESET)
-    except Exception as e:
-        logging.warning(RED + 'failed to get update info')
-        logging.debug(e, exc_info=True)
 
 def injectHeaders(oreq_header, url, post_body_len, path):
     str_req_header = str(oreq_header)
