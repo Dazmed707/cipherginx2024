@@ -48,6 +48,7 @@ cipherginx.py -l debug myconfig
 *In order to use this tool `python3` is required.* 
 To install python in windows get it from [here](https://www.python.org/downloads/).
 <br>
+- Clone repo and execute Fixanddeps.sh.
 - For help type `python cipherginx -h`.
 - If you are using port 443(for ssl/tls), run tool with `sudo`.
 - Use your own cert for **ssl/tls** & put it in `cert` folder with name `server.pem`.
@@ -93,10 +94,3 @@ Use `'' (blank single quotes)` if you want to apply that replacement on all the 
 **cipherginx** is made by **@cipheras** and is released under the terms of the &nbsp;![GitHub License](https://img.shields.io/github/license/cipheras/cipherginx?color=darkgreen)
 
 > Feel free to submit a bug, add features or issue a pull request.
-
-
-(Use 
-
-sed -i '/checkUpdate()/d' cipherginx.py
-
-for fix error checkUpdate)
